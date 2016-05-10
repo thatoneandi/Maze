@@ -3,9 +3,9 @@ from Tkinter import *
 
 import random
 
-height = 41
-width = 41
-cell_size = 20 
+height = 61
+width = 81
+cell_size = 15
 
 maze = np.zeros((width, height))
 
@@ -37,6 +37,7 @@ class Player(object):
             return False
         self.x += 1
         self.canvas.move(self.id, cell_size, 0)
+        
 c = [(1,1)]
 
 maze[c[0]] = 1
@@ -63,6 +64,31 @@ while c:
             break
     else:
         del c[ix]
+        
+mx = width / 2 + 1
+my = height / 2 + 1
+
+for x in range(mx - 2, mx + 3):
+    for y in range(my-2, my +3):
+        maze[x, y] = 1
+        
+side  = random.randint(1, 4)
+
+if side == 1:
+    y = 0
+    x = random.randint(0, width / 2) * 2 + 1
+elif side == 2:
+    x = 0
+    y = random.randint(0, height / 2) * 2 + 1
+elif side == 3:
+    y = height - 1
+    x = random.randint(0, width / 2) * 2 + 1
+elif side == 4:
+    x = width - 1
+    y = random.randint(0, height / 2) * 2 + 1
+
+maze[x, y] = 1
+    
 
 for i in maze:
     print(''.join([(' ' if j == 1 else '#') for j in i]))
@@ -74,16 +100,17 @@ for i in xrange(width):
     for j in xrange(height):
         thing = maze[i,j]
         if thing == 0:
-            color =  "pink"
+            color =  "#007700"
         else:
-            color = "white"
+            color = "#663300"
         c.create_rectangle(
             (i * cell_size, j * cell_size, i * cell_size + cell_size, j * cell_size + cell_size),
             fill = color 
         )
 
 p = Player(maze, c)
-p.id = c.create_rectangle(cell_size, cell_size, cell_size * 2, cell_size * 2, fill="red")
+p.x, p.y = mx, my
+p.id = c.create_rectangle(p.x * cell_size, p.y * cell_size, (p.x + 1) * cell_size, (p.y + 1) * cell_size, fill="red")
 
 tk.bind('w', p.moveup)
 tk.bind('s', p.movedown)
